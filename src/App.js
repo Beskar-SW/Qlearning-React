@@ -1,44 +1,12 @@
-import { Canvas } from "@react-three/fiber";
+import { Canvas} from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { useEffect, useState, memo, Fragment, useRef, useCallback} from "react";
+import { useEffect, useState} from "react";
 import { Suspense } from "react";
-import {Physics, RigidBody} from "@react-three/rapier"
-import { Box } from "@react-three/drei";
-
-const LaberintoMuro = memo(({ position, scale, color }) => (
-  <RigidBody type="fixed">
-    <Box position={position} scale={scale}>
-      <meshStandardMaterial color={color} />
-    </Box>
-  </RigidBody>
-));
+import {Physics} from "@react-three/rapier"
+import Game from "./Container";
 
 function App() {
   const [data, setData] = useState({});
-  const personaje = useRef();
-  
-
-
-  // const moverPersonaje = useCallback((event) => {
-  //   if (event.key === "ArrowUp") {
-  //     personaje.current.applyImpulse({x: 0, y: 0, z: -4});
-  //   }
-  //   if (event.key === "ArrowDown") {
-  //     personaje.current.applyImpulse({x: 0, y: 0,
-  //       z: 4});
-  //   }
-  //   if (event.key === "ArrowLeft") {
-  //     personaje.current.applyImpulse({x: -4, y: 0
-  //       , z: 0});
-  //   }
-  //   if (event.key === "ArrowRight") {
-  //     personaje.current.applyImpulse({x: 4, y: 0, z: 0});
-  //   }
-  // }, []);
-
-  const handleClick = () => {
-    personaje.current.applyImpulse({x: 0, y: 4, z: 0});
-  }
 
   useEffect(() => {
     async function loadData() {
@@ -77,17 +45,7 @@ function App() {
     }
     loadData();
   }, []);
-
-
-  // useEffect(() => {
-  //   document.addEventListener("keydown", moverPersonaje);
-
-  //   return () => {
-  //     document.removeEventListener("keydown", moverPersonaje);
-  //   }
-  // }, [moverPersonaje]);
-
-
+    
   return (
     // <Canvas shadows camera={{ fov: 64, position: [40, 40, 30], rotateX: 5}}>
     <Canvas shadows camera={{ fov: 64, position: data.camera_position, rotateX: 5}}>
@@ -95,41 +53,8 @@ function App() {
         <Physics debug>
           <ambientLight intensity={0.5} />
           <OrbitControls />
-          {
-            data.laberinto && data.laberinto.map((row, i) => (
-              <Fragment key={i}>
-                {
-                  row.map((cell, j) => (
-                    <Fragment key={ `${i}-${j}` }>
-                      
-                      {cell === 1 ? <LaberintoMuro  position={[i*3, 0, j*3]} scale={[3, 3, 3]} color={"purple"} /> : <LaberintoMuro  position={[i*3, -2, j*3]} scale={[3, 2, 3]} color={"red"} /> }
-                      {
-                        cell === 1 && (
-                          <LaberintoMuro
-                            position={[i * 3, 1.5, j * 3]}
-                            scale={[3, 3, 3]}
-                            color={"purple"}
-                          />
-                        )
-                      }
-                      
-                    </Fragment>
-                  ))
-                }
-              </Fragment>
-            ))
-          }
-
-          {
-            data.inicio && (
-              <RigidBody ref={personaje}>
-                <Box position={[data.inicio[0] * 3, 1.5, data.inicio[1] * 3]} scale={[1, 1, 1]} onClick={handleClick}>
-                  <meshStandardMaterial color={"white"} />
-                </Box>
-              </RigidBody>
-            )
-          }
-
+          <Game data={data} />
+          
         </Physics>
       </Suspense>
     </Canvas>
