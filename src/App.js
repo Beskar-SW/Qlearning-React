@@ -39,6 +39,7 @@ function App() {
         size: [x, y],
         inicio: [1, 1],
         fin: [6, 3],
+        recompensas: [[1, 8], [8, 8], [8, 1], [3, 1], [3, 6], [5, 6], [5, 3]],
         camera_position: [x * 1 / 2, 40, y * 6 / 2],
       });
 
@@ -54,7 +55,6 @@ function App() {
           <ambientLight intensity={0.5} />
           <OrbitControls />
           <Game data={data} />
-          
         </Physics>
       </Suspense>
     </Canvas>
